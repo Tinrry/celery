@@ -341,12 +341,15 @@ class Scheduler:
                 not self.schedules_equal(self.old_schedulers, self.schedule)):
             self.old_schedulers = copy.copy(self.schedule)
             self.populate_heap()
-
+        # 最小堆，承载了所有我们设置的定时任务，最小堆的堆顶元素是最小的。排序的一句是
+        # next_time_to_run,celery会先计算每个定时任务下一次执行的时间戳，根据这个时间
+        # 差值进行排序
         H = self._heap
 
         if not H:
             return max_interval
 
+        # is_due这个任务应不应该执行
         event = H[0]
         entry = event[2]
         is_due, next_time_to_run = self.is_due(entry)
@@ -354,6 +357,7 @@ class Scheduler:
             verify = heappop(H)
             if verify is event:
                 next_entry = self.reserve(entry)
+                # 提交定时任务
                 self.apply_entry(entry, producer=self.producer)
                 heappush(H, event_t(self._when(next_entry, next_time_to_run),
                                     event[1], next_entry))
@@ -642,7 +646,7 @@ class Service:
 
         try:
             while not self._is_shutdown.is_set():
-                interval = self.scheduler.tick()
+                interval = self.scheduler.ticis_shutk()
                 if interval and interval > 0.0:
                     debug('beat: Waking up %s.',
                           humanize_seconds(interval, prefix='in '))
@@ -723,7 +727,7 @@ else:
             self.service.stop()
             self.terminate()
 
-
+# 决定使用线程还是进程来运行beat服务
 def EmbeddedService(app, max_interval=None, **kwargs):
     """Return embedded clock service.
 

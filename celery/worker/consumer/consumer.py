@@ -151,6 +151,7 @@ class Consumer:
     class Blueprint(bootsteps.Blueprint):
         """Consumer blueprint."""
 
+        # 在启动的时候，启动顺序根据各个组件的依赖，根据附图从下而上，根据依赖箭头逐步往上启动，到了consumer之后，就会使用connection真正获取消息进行执行，但是，connection有依赖很多东西。
         name = 'Consumer'
         default_steps = [
             'celery.worker.consumer.connection:Connection',
@@ -413,6 +414,7 @@ class Consumer:
         if self.pool and self.pool.flush:
             self.pool.flush()
 
+    # 建立连接
     def connect(self):
         """Establish the broker connection used for consuming tasks.
 
@@ -552,6 +554,7 @@ class Consumer:
             task.__trace__ = build_tracer(name, task, loader, self.hostname,
                                           app=self.app)
 
+    # 真正的的消息处理（解析消息并执行）的逻辑
     def create_task_handler(self, promise=promise):
         strategies = self.strategies
         on_unknown_message = self.on_unknown_message
@@ -612,7 +615,7 @@ class Evloop(bootsteps.StartStopStep):
 
     label = 'event loop'
     last = True
-
+# 启动一个loop来获取等待消息
     def start(self, c):
         self.patch_all(c)
         c.loop(*c.loop_args())

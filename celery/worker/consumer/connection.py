@@ -9,7 +9,7 @@ __all__ = ('Connection',)
 logger = get_logger(__name__)
 info = logger.info
 
-
+# 管理和broker的connection连接
 class Connection(bootsteps.StartStopStep):
     """Service managing the consumer broker connection."""
 

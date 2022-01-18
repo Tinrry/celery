@@ -14,7 +14,7 @@ __all__ = ('Control',)
 
 logger = get_logger(__name__)
 
-
+# 远程命令管理服务,节点管理和通信
 class Control(bootsteps.StartStopStep):
     """Remote control command service."""
 
@@ -22,6 +22,7 @@ class Control(bootsteps.StartStopStep):
 
     def __init__(self, c, **kwargs):
         self.is_green = c.pool is not None and c.pool.is_green
+        # 构建一个Pidbox
         self.box = (pidbox.gPidbox if self.is_green else pidbox.Pidbox)(c)
         self.start = self.box.start
         self.stop = self.box.stop

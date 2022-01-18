@@ -448,6 +448,7 @@ def build_tracer(name, task, loader=None, hostname=None, store_errors=True,
                     if task_before_start:
                         task_before_start(uuid, args, kwargs)
 
+                    # 同步发送消息实现
                     R = retval = fun(*args, **kwargs)
                     state = SUCCESS
                 except Reject as exc:

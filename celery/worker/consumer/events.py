@@ -10,7 +10,7 @@ from .connection import Connection
 
 __all__ = ('Events',)
 
-
+# 用于发送监控事件, 对task的状态做快照，对task的状态做实时的处理，监控celery的执行状态
 class Events(bootsteps.StartStopStep):
     """Service used for sending monitoring events."""
 

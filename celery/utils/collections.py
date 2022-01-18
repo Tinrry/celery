@@ -67,7 +67,7 @@ class OrderedDict(_OrderedDict):
 
     if not hasattr(_OrderedDict, 'move_to_end'):
         if _dict_is_ordered:  # pragma: no cover
-
+            # DAG依赖关系声明
             def move_to_end(self, key, last=True):
                 # type: (Any, bool) -> None
                 if not last:

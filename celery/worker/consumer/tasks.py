@@ -11,7 +11,7 @@ __all__ = ('Tasks',)
 logger = get_logger(__name__)
 debug = logger.debug
 
-
+# 启动消息consumer
 class Tasks(bootsteps.StartStopStep):
     """Bootstep starting the task message consumer."""
 
@@ -34,7 +34,7 @@ class Tasks(bootsteps.StartStopStep):
         c.connection.default_channel.basic_qos(
             0, c.initial_prefetch_count, qos_global,
         )
-
+        # 启动消息消费者
         c.task_consumer = c.app.amqp.TaskConsumer(
             c.connection, on_decode_error=c.on_decode_error,
         )

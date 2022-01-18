@@ -32,6 +32,7 @@ class WorkerComponent(bootsteps.StartStopStep):
     """Bootstep that starts the autoscaler thread/timer in the worker."""
 
     label = 'Autoscaler'
+    # DAG依赖关系的声明
     conditional = True
     requires = (Pool,)
 
@@ -57,7 +58,7 @@ class WorkerComponent(bootsteps.StartStopStep):
         """Return `Autoscaler` info."""
         return {'autoscaler': w.autoscaler.info()}
 
-
+# 自动增长pool中的worker
 class Autoscaler(bgThread):
     """Background thread to autoscale pool workers."""
 

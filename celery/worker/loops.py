@@ -54,6 +54,7 @@ def asynloop(obj, connection, consumer, blueprint, hub, qos,
     update_qos = qos.update
     errors = connection.connection_errors
 
+    # 设置消息处理函数，真正的消息处理逻辑
     on_task_received = obj.create_task_handler()
 
     heartbeat_error = _enable_amqheartbeats(hub.timer, connection, rate=hbrate)
@@ -79,6 +80,7 @@ def asynloop(obj, connection, consumer, blueprint, hub, qos,
     # FIXME: Use loop.run_forever
     # Tried and works, but no time to test properly before release.
     hub.propagate_errors = errors
+    # 得到执行引擎
     loop = hub.create_loop()
 
     try:
@@ -94,6 +96,7 @@ def asynloop(obj, connection, consumer, blueprint, hub, qos,
                 update_qos()
 
             try:
+                # 调用执行引擎
                 next(loop)
             except StopIteration:
                 loop = hub.create_loop()

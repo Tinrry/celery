@@ -26,6 +26,7 @@ class CycleError(Exception):
     """A cycle was detected in an acyclic graph."""
 
 
+# bootstep使用的DAG
 class DependencyGraph:
     """A directed acyclic graph of objects and their dependencies.
 

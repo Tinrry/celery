@@ -118,6 +118,7 @@ def default(task, app, consumer,
     send_event = eventer and eventer.send
     task_sends_events = events and task.send_events
 
+    # 这个实现在kombu/async/timer.py中，任务没有放进amqp的队列，而是放进了timer的定时队列里，等待被执行。
     call_at = consumer.timer.call_at
     apply_eta_task = consumer.apply_eta_task
     rate_limits_enabled = not consumer.disable_rate_limits
@@ -159,6 +160,7 @@ def default(task, app, consumer,
                 'kwargs': safe_repr(req.kwargs),
             }
             info(_app_trace.LOG_RECEIVED, context, extra={'data': context})
+            #  在worker收到任务的时候，是有一定的脾气不执行任务的，例如任务过期了，执行过了等等
         if (req.expires or req.id in revoked_tasks) and req.revoked():
             return
 
@@ -175,6 +177,7 @@ def default(task, app, consumer,
                 expires=req.expires and req.expires.isoformat(),
             )
 
+        # 延时执行任务
         bucket = None
         eta = None
         if req.eta:
@@ -187,6 +190,7 @@ def default(task, app, consumer,
                 error("Couldn't convert ETA %r to timestamp: %r. Task: %r",
                       req.eta, exc, req.info(safe=True), exc_info=True)
                 req.reject(requeue=False)
+        # 限制频率执行任务
         if rate_limits_enabled:
             bucket = get_bucket(task.name)
 
@@ -200,7 +204,8 @@ def default(task, app, consumer,
             return task_message_handler
         if bucket:
             return limit_task(req, bucket, 1)
-
+        # 在消费任务之前，worker会先设置一番，比如说声明一下已经接受到任务了，然后再调用一
+        # 下各个注册在worker里面的回调函数，然后再真正执行任务。
         task_reserved(req)
         if callbacks:
             [callback(req) for callback in callbacks]

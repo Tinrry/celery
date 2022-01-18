@@ -320,6 +320,7 @@ class Request:
         # used similarly to reply_to
         return self._request_dict['correlation_id']
 
+    # 执行任务
     def execute_using_pool(self, pool, **kwargs):
         """Used by the worker to send this task to the pool.
 
@@ -444,6 +445,7 @@ class Request:
         send_revoked(self.task, request=self._context,
                      terminated=terminated, signum=signum, expired=expired)
 
+    # 除了正常的会被记录在revoked_tasks中之外，还可能出现被终止和执行失败这些情况
     def revoked(self):
         """If revoked, skip task and mark state."""
         expired = False

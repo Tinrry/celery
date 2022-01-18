@@ -785,6 +785,13 @@ class Task:
                 'priority': options.get('priority'),
             },
         }
+        # 同步发送消息实现
+        # tracer几部分功能：
+        # 信号处理： 执行前，后，成功这几个时刻需要释放一些信号给感兴趣的成员
+        # 失败处理：对于没有执行的情况需要进行细分处理，例如：reject,ignore, retry, exception等
+        # 依赖处理： 因为celery支持一些简单的依赖，所以执行完成之后需要执行被依赖的tasks
+        # 执行逻辑： 这个就是正常的函数调用
+        # 其他： 例如统计执行时间，出入栈之类的
         tb = None
         tracer = build_tracer(
             task.name, task, eager=True,

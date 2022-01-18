@@ -5,7 +5,7 @@ from .connection import Connection
 
 __all__ = ('Agent',)
 
-
+# cell actor
 class Agent(bootsteps.StartStopStep):
     """Agent starts :pypi:`cell` actors."""
 

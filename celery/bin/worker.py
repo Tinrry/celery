@@ -349,6 +349,11 @@ def worker(ctx, hostname=None, pool_cls=None, app=None, uid=None, gid=None,
             quiet=ctx.obj.quiet,
             **kwargs)
         worker.start()
+        # # get worker resource accessible: cpu
+        # # mock
+        # worker.cpu = 5
+        # if worker.cpu < current_task.cpu:
+        #     ctx.exit(0)
         return worker.exitcode
     except SecurityError as e:
         ctx.obj.error(e.args[0])

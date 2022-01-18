@@ -60,6 +60,7 @@ defined in the `task_queues` setting.
 """
 
 
+# worker的实现
 class WorkController:
     """Unmanaged worker instance."""
 
@@ -76,6 +77,7 @@ class WorkController:
     class Blueprint(bootsteps.Blueprint):
         """Worker bootstep blueprint."""
 
+        # 步骤
         name = 'Worker'
         default_steps = {
             'celery.worker.components:Hub',
@@ -220,6 +222,7 @@ class WorkController:
     def _process_task_sem(self, req):
         return self._quick_acquire(self._process_task, req)
 
+    # 执行任务
     def _process_task(self, req):
         """Process task by sending it to the pool of workers."""
         try:

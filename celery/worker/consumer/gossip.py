@@ -19,7 +19,7 @@ __all__ = ('Gossip',)
 logger = get_logger(__name__)
 debug, info = logger.debug, logger.info
 
-
+# 消费来自其他worker的事件
 class Gossip(bootsteps.ConsumerStep):
     """Bootstep consuming events from other workers.
 

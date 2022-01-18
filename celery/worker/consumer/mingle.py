@@ -9,7 +9,7 @@ __all__ = ('Mingle',)
 logger = get_logger(__name__)
 debug, info, exception = logger.debug, logger.info, logger.exception
 
-
+# 不同worker之间同步状态用的
 class Mingle(bootsteps.StartStopStep):
     """Bootstep syncing state with neighbor workers.
 

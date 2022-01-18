@@ -28,7 +28,7 @@ pools, instead you *must use the -P* argument so that patches are applied
 as early as possible.
 """
 
-
+# 用于执行定时任务的Timer，和consumer那里的timer不同
 class Timer(bootsteps.Step):
     """Timer bootstep."""
 
@@ -52,7 +52,7 @@ class Timer(bootsteps.Step):
     def on_timer_tick(self, delay):
         logger.debug('Timer wake-up! Next ETA %s secs.', delay)
 
-
+# eventloop的封装对象（kombu）
 class Hub(bootsteps.StartStopStep):
     """Worker starts the event loop."""
 
@@ -66,6 +66,7 @@ class Hub(bootsteps.StartStopStep):
         return w.use_eventloop
 
     def create(self, w):
+        # 需要学下kombu的源码
         w.hub = get_event_loop()
         if w.hub is None:
             required_hub = getattr(w._conninfo, 'requires_hub', None)
@@ -94,7 +95,7 @@ class Hub(bootsteps.StartStopStep):
         else:
             pool.Lock = DummyLock
 
-
+# 构造各种执行池（线程、进程、协程）
 class Pool(bootsteps.StartStopStep):
     """Bootstep managing the worker pool.
 
@@ -108,7 +109,7 @@ class Pool(bootsteps.StartStopStep):
         * max_concurrency
         * min_concurrency
     """
-
+    # 声明DAG的依赖关系
     requires = (Hub,)
 
     def __init__(self, w, autoscale=None, **kwargs):
@@ -140,6 +141,7 @@ class Pool(bootsteps.StartStopStep):
         threaded = not w.use_eventloop or IS_WINDOWS
         procs = w.min_concurrency
         w.process_task = w._process_task
+        # 将task放入pool
         if not threaded:
             semaphore = w.semaphore = LaxBoundedSemaphore(procs)
             w._quick_acquire = w.semaphore.acquire
@@ -174,7 +176,7 @@ class Pool(bootsteps.StartStopStep):
     def register_with_event_loop(self, w, hub):
         w.pool.register_with_event_loop(hub)
 
-
+# 创建BEAT进程，以子进程的形式运行,这个是实现定时任务的启动
 class Beat(bootsteps.StartStopStep):
     """Step used to embed a beat process.
 
@@ -198,7 +200,7 @@ class Beat(bootsteps.StartStopStep):
                                      scheduler_cls=w.scheduler)
         return b
 
-
+# 持久化worker重启区间的数据
 class StateDB(bootsteps.Step):
     """Bootstep that sets up between-restart state database file."""
 

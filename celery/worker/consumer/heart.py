@@ -6,7 +6,7 @@ from .events import Events
 
 __all__ = ('Heart',)
 
-
+# 发送心跳事件（consumer的心跳）
 class Heart(bootsteps.StartStopStep):
     """Bootstep sending event heartbeats.
 
